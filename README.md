@@ -1,69 +1,69 @@
-# Weather Alert Bot
+# Бот погодних сповіщень
 
-Get Telegram alerts when rain, storms, high winds, or extreme temperatures are forecast — no server needed, runs entirely in your browser.
+Отримуйте Telegram-сповіщення, коли прогнозують дощ, грози, сильний вітер або екстремальні температури — без сервера, повністю працює у вашому браузері.
 
-**[Live Demo on GitHub Pages](https://elesiaann.github.io/weather-alert-bot/)**
+**[Живе демо на GitHub Pages](https://dneese.github.io/weather-alert-bot/)**
 
-## Features
+## Можливості
 
-- **Real-time weather** via OpenWeatherMap (current conditions + 5-day forecast)
-- **Telegram alerts** sent directly from your browser via the Bot API
-- **Configurable thresholds** — rain probability %, wind speed, min/max temperature
-- **Alert types** — Rain/Snow, High Winds, Freezing temps, Extreme heat, Severe weather (storms, tornadoes, fog, etc.)
-- **Auto-check schedule** — every 30 min / 1 h / 3 h / 6 h with live countdown
-- **GPS location** — use your browser's geolocation instead of typing a city
-- **Alert history log** — persisted to localStorage, shows last 100 events
-- **Dark / Light theme** toggle
-- **All keys stored locally** — your API key and Telegram token never leave your browser
-- Zero build step — pure HTML / CSS / JavaScript
+- **Погода в реальному часі** через OpenWeatherMap (поточні умови + прогноз на 5 днів)
+- **Telegram-сповіщення**, що надсилаються напряму з вашого браузера через Bot API
+- **Налаштовувані пороги** — імовірність дощу %, швидкість вітру, мін./макс. температура
+- **Типи сповіщень** — Дощ/Сніг, Сильний вітер, Мороз, Сильна спека, Небезпечна погода (грози, торнадо, туман та ін.)
+- **Розклад автоперевірки** — кожні 30 хв / 1 год / 3 год / 6 год із прямим зворотним відліком
+- **GPS-локація** — використовуйте геолокацію браузера замість введення міста
+- **Журнал історії сповіщень** — зберігається в localStorage, показує останні 100 подій
+- **Перемикач темної/світлої теми**
+- **Усі ключі зберігаються локально** — ваш API-ключ і токен Telegram ніколи не залишають ваш браузер
+- Без кроку збірки — чистий HTML / CSS / JavaScript
 
-## Quick Setup
+## Швидке налаштування
 
-### 1. Get an OpenWeatherMap API key
-Sign up at [openweathermap.org](https://openweathermap.org/api) → **Free** tier is enough (1,000 calls/day).
+### 1. Отримайте API-ключ OpenWeatherMap
+Зареєструйтесь на [openweathermap.org](https://openweathermap.org/api) → рівня **Free** достатньо (1 000 запитів/день).
 
-### 2. Create a Telegram Bot
-1. Open Telegram and message **[@BotFather](https://t.me/BotFather)**
-2. Send `/newbot` and follow the prompts
-3. Copy the **Bot Token** (looks like `123456789:ABC-DEF…`)
+### 2. Створіть Telegram-бота
+1. Відкрийте Telegram і напишіть **[@BotFather](https://t.me/BotFather)**
+2. Надішліть `/newbot` і дотримуйтесь підказок
+3. Скопіюйте **токен бота** (виглядає як `123456789:ABC-DEF…`)
 
-### 3. Get your Chat ID
-1. Start your new bot (send it any message)
-2. Open `https://api.telegram.org/bot<YOUR_TOKEN>/getUpdates` in a browser
-3. Find `result[0].message.chat.id` in the JSON response
+### 3. Отримайте ваш Chat ID
+1. Запустіть вашого бота (надішліть йому будь-яке повідомлення)
+2. Відкрийте `https://api.telegram.org/bot<YOUR_TOKEN>/getUpdates` у браузері
+3. Знайдіть `result[0].message.chat.id` у JSON-відповіді
 
-### 4. Configure the app
-Open the live site, paste in your API key, Bot Token, Chat ID, and city name, then click **Save Settings** → **Check Now**.
+### 4. Налаштуйте застосунок
+Відкрийте живий сайт, вставте API-ключ, токен бота, Chat ID і назву міста, а потім натисніть **Зберегти налаштування** → **Перевірити зараз**.
 
-## Deployment
+## Розгортання
 
 ### GitHub Pages
-Pushes to `main` deploy automatically via the included GitHub Actions workflow.
-Enable Pages in: **Settings → Pages → Source: GitHub Actions**
+Push у `main` автоматично розгортається через включений GitHub Actions workflow.
+Увімкніть Pages у: **Settings → Pages → Source: GitHub Actions**
 
 ### Vercel
 ```bash
 vercel --prod
 ```
-A `vercel.json` is included with security headers configured.
+`vercel.json` включено з налаштованими заголовками безпеки.
 
-## Local Development
+## Локальна розробка
 
-No build step needed — just open `index.html` in a browser.
+Крок збірки не потрібен — просто відкрийте `index.html` у браузері.
 
 ```bash
-git clone https://github.com/elesiaann/weather-alert-bot
+git clone https://github.com/dneese/weather-alert-bot
 cd weather-alert-bot
 open index.html   # macOS
 start index.html  # Windows
 ```
 
-## Tech Stack
+## Технологічний стек
 
-| Layer | Tool |
+| Рівень | Інструмент |
 |---|---|
-| Weather data | OpenWeatherMap REST API (free tier) |
-| Messaging | Telegram Bot API (`/sendMessage`) |
-| Frontend | Vanilla HTML / CSS / JavaScript (ES2020) |
-| Hosting | GitHub Pages (Actions) or Vercel |
-| Storage | `localStorage` (all data stays in your browser) |
+| Дані про погоду | OpenWeatherMap REST API (безкоштовний тариф) |
+| Обмін повідомленнями | Telegram Bot API (`/sendMessage`) |
+| Фронтенд | Vanilla HTML / CSS / JavaScript (ES2020) |
+| Хостинг | GitHub Pages (Actions) або Vercel |
+| Сховище | `localStorage` (усі дані залишаються у вашому браузері) |
