@@ -114,7 +114,7 @@ function updateRangeLabels() {
   $('hot-val').textContent  = $('hot-threshold').value;
 
   document.querySelectorAll('.unit-label').forEach(el => {
-    el.textContent = isMetric ? 'km/h' : 'mph';
+    el.textContent = isMetric ? 'км/год' : 'миль/год';
   });
   document.querySelectorAll('.unit-label2').forEach(el => {
     el.textContent = isMetric ? 'C' : 'F';
@@ -181,7 +181,7 @@ function renderLog() {
 async function sendTelegram(text) {
   const token = $('tg-token').value.trim();
   const chat  = $('tg-chat').value.trim();
-  if (!token || !chat) throw new Error('Telegram token or Chat ID is missing');
+  if (!token || !chat) throw new Error('Відсутній токен Telegram або Chat ID');
 
   const url = `https://api.telegram.org/bot${encodeURIComponent(token)}/sendMessage`;
   const res = await fetch(url, {
@@ -190,7 +190,7 @@ async function sendTelegram(text) {
     body: JSON.stringify({ chat_id: chat, text, parse_mode: 'HTML' }),
   });
   const json = await res.json();
-  if (!json.ok) throw new Error(json.description || 'Telegram API error');
+  if (!json.ok) throw new Error(json.description || 'Помилка Telegram API');
   return json;
 }
 
@@ -200,7 +200,7 @@ async function sendTelegram(text) {
 function getLocationParam() {
   if (state.lat && state.lon) return `lat=${state.lat}&lon=${state.lon}`;
   const city = $('city-input').value.trim();
-  if (!city) throw new Error('Enter a city or use GPS location');
+  if (!city) throw new Error('Введіть місто або скористайтеся GPS-геолокацією');
   return `q=${encodeURIComponent(city)}`;
 }
 
@@ -210,7 +210,7 @@ async function fetchCurrentWeather(apiKey, units) {
   const res  = await fetch(url);
   if (!res.ok) {
     const j = await res.json().catch(() => ({}));
-    throw new Error(j.message || `OWM error ${res.status}`);
+    throw new Error(j.message || `Помилка погоди ${res.status}`);
   }
   return res.json();
 }
@@ -221,7 +221,7 @@ async function fetchForecast(apiKey, units) {
   const res  = await fetch(url);
   if (!res.ok) {
     const j = await res.json().catch(() => ({}));
-    throw new Error(j.message || `OWM forecast error ${res.status}`);
+    throw new Error(j.message || `Помилка прогнозу погоди ${res.status}`);
   }
   return res.json();
 }
@@ -260,31 +260,31 @@ function detectAlerts(current, forecastList) {
     alerts.push({
       type: 'wind',
       icon: '💨',
-      title: 'High Wind Warning',
-      msg: `Wind speed is ${fmt(windSpeedConverted, 1)} ${isMetric ? 'km/h' : 'mph'}`,
+      title: 'Попередження про сильний вітер',
+      msg: `Швидкість вітру ${fmt(windSpeedConverted, 1)} ${isMetric ? 'км/год' : 'миль/год'}`,
     });
   }
   if (doCold && current.main.temp <= coldThr) {
     alerts.push({
       type: 'cold',
       icon: '🥶',
-      title: 'Freezing Temperature',
-      msg: `Temperature is ${fmt(current.main.temp, 1)}°${isMetric ? 'C' : 'F'}`,
+      title: 'Мороз',
+      msg: `Температура ${fmt(current.main.temp, 1)}°${isMetric ? 'C' : 'F'}`,
     });
   }
   if (doHot && current.main.temp >= hotThr) {
     alerts.push({
       type: 'heat',
       icon: '🔥',
-      title: 'Extreme Heat',
-      msg: `Temperature is ${fmt(current.main.temp, 1)}°${isMetric ? 'C' : 'F'}`,
+      title: 'Сильна спека',
+      msg: `Температура ${fmt(current.main.temp, 1)}°${isMetric ? 'C' : 'F'}`,
     });
   }
   if (doSevere && SEVERE_IDS.includes(current.weather[0]?.id)) {
     alerts.push({
       type: 'severe',
       icon: '⚠️',
-      title: 'Severe Weather',
+      title: 'Небезпечна погода',
       msg: current.weather[0].description,
     });
   }
@@ -303,8 +303,8 @@ function detectAlerts(current, forecastList) {
       alerts.push({
         type: 'rain',
         icon: isSnow ? '🌨️' : '🌧️',
-        title: isSnow ? 'Snow Forecast' : 'Rain Forecast',
-        msg: `Up to ${fmt(maxPop)}% chance in the next 24 hours`,
+        title: isSnow ? 'Прогноз снігу' : 'Прогноз дощу',
+        msg: `До ${fmt(maxPop)}% імовірності протягом наступних 24 годин`,
       });
     }
   }
@@ -325,15 +325,15 @@ function buildAlertMessage(city, current, alerts) {
     : (current.wind?.speed || 0);
 
   const lines = [
-    `⛈️ <b>Weather Alert — ${city}</b>`,
+    `⛈️ <b>Погодне сповіщення — ${city}</b>`,
     ``,
-    `📍 <b>Current conditions:</b>`,
-    `🌡 Temp: ${fmt(current.main.temp, 1)}${deg} (feels ${fmt(current.main.feels_like, 1)}${deg})`,
-    `💧 Humidity: ${current.main.humidity}%`,
-    `💨 Wind: ${fmt(windSpd, 1)} ${windUnit}`,
+    `📍 <b>Поточні умови:</b>`,
+    `🌡 Температура: ${fmt(current.main.temp, 1)}${deg} (відчувається як ${fmt(current.main.feels_like, 1)}${deg})`,
+    `💧 Вологість: ${current.main.humidity}%`,
+    `💨 Вітер: ${fmt(windSpd, 1)} ${windUnit}`,
     `🌤 ${current.weather[0]?.description || ''}`,
     ``,
-    `🚨 <b>Alerts triggered:</b>`,
+    `🚨 <b>Спрацювали сповіщення:</b>`,
     ...alerts.map(a => `${a.icon} <b>${a.title}</b> — ${a.msg}`),
     ``,
     `🕐 ${new Date().toLocaleString()}`,
@@ -406,7 +406,7 @@ function renderForecast(forecastData) {
   const container = $('forecast-list');
   container.innerHTML = days.map(item => {
     const d = new Date(item.dt * 1000);
-    const dayName = d.toLocaleDateString('en', { weekday: 'short' });
+    const dayName = d.toLocaleDateString('uk', { weekday: 'short' });
     const pop = Math.round((item.pop || 0) * 100);
     const hasAlert = pop >= rainThr || SEVERE_IDS.includes(item.weather[0]?.id);
 
@@ -418,7 +418,7 @@ function renderForecast(forecastData) {
       </div>
       <div class="fc-desc">${esc(item.weather[0]?.description || '')}</div>
       ${pop > 0 ? `<div class="fc-rain">💧 ${pop}%</div>` : ''}
-      ${hasAlert ? `<div class="fc-alert">⚠️ Alert</div>` : ''}
+      ${hasAlert ? `<div class="fc-alert">⚠️ Сповіщення</div>` : ''}
     </div>`;
   }).join('');
 }
@@ -428,9 +428,9 @@ function renderForecast(forecastData) {
 ══════════════════════════════════════════════════════════════ */
 async function runCheck(sendAlerts = true) {
   const apiKey = $('owm-key').value.trim();
-  if (!apiKey) { setSaveStatus('Enter an OpenWeatherMap API key first.', 'error'); return; }
+  if (!apiKey) { setSaveStatus('Спочатку введіть API-ключ OpenWeatherMap.', 'error'); return; }
 
-  setStatus('Fetching weather data…', 'info', '');
+  setStatus('Отримання даних про погоду…', 'info', '');
   $('btn-check').disabled = true;
 
   try {
@@ -457,27 +457,27 @@ async function runCheck(sendAlerts = true) {
     state.lastFetch = new Date();
 
     if (alerts.length === 0) {
-      setStatus(`All clear in ${current.name} — last checked ${state.lastFetch.toLocaleTimeString()}`, '', 'ok');
-      addLog('info', `Check complete for ${current.name} — no alerts triggered`);
+      setStatus(`Все чисто в ${current.name} — перевірено о ${state.lastFetch.toLocaleTimeString()}`, '', 'ok');
+      addLog('info', `Перевірку завершено для ${current.name} — сповіщення не спрацювали`);
     } else {
       const summary = alerts.map(a => a.title).join(', ');
-      setStatus(`${alerts.length} alert(s) in ${current.name}: ${summary}`, '', 'warn');
+      setStatus(`Виявлено ${alerts.length} сповіщення(нь) в ${current.name}: ${summary}`, '', 'warn');
 
       if (sendAlerts) {
         const msg = buildAlertMessage(current.name, current, alerts);
         try {
           await sendTelegram(msg);
-          addLog('sent', `Telegram alert sent for ${current.name}: ${summary}`);
+          addLog('sent', `Telegram-сповіщення надіслано для ${current.name}: ${summary}`);
         } catch (e) {
-          addLog('error', `Failed to send Telegram alert: ${e.message}`);
-          setStatus(`Alerts detected but Telegram failed: ${e.message}`, '', 'error');
+          addLog('error', `Не вдалося надіслати Telegram-сповіщення: ${e.message}`);
+          setStatus(`Сповіщення виявлено, але Telegram не спрацював: ${e.message}`, '', 'error');
         }
       } else {
-        addLog('info', `Check complete — ${alerts.length} alert(s) detected (alerts suppressed this run)`);
+        addLog('info', `Перевірку завершено — виявлено ${alerts.length} сповіщення(нь), надсилання вимкнено для цього запуску`);
       }
     }
   } catch(e) {
-    setStatus(`Error: ${e.message}`, '', 'error');
+    setStatus(`Помилка: ${e.message}`, '', 'error');
     addLog('error', e.message);
   } finally {
     $('btn-check').disabled = false;
@@ -501,7 +501,7 @@ function startAutoCheck() {
     const m = Math.floor(state.secsLeft / 60);
     const s = state.secsLeft % 60;
     $('countdown-text').textContent =
-      `Next check in ${m > 0 ? m + 'm ' : ''}${s < 10 ? '0' : ''}${s}s`;
+      `Наступна перевірка за ${m > 0 ? m + 'хв ' : ''}${s < 10 ? '0' : ''}${s}с`;
     if (state.secsLeft <= 0) {
       state.secsLeft = mins * 60;
       runCheck(true);
@@ -514,18 +514,18 @@ function startAutoCheck() {
 ══════════════════════════════════════════════════════════════ */
 function useGPS() {
   if (!navigator.geolocation) {
-    setSaveStatus('Geolocation not supported in this browser.', 'error');
+    setSaveStatus('Цей браузер не підтримує геолокацію.', 'error');
     return;
   }
-  setSaveStatus('Getting location…', '');
+  setSaveStatus('Отримання локації…', '');
   navigator.geolocation.getCurrentPosition(
     pos => {
       state.lat = pos.coords.latitude;
       state.lon = pos.coords.longitude;
       $('city-input').value = `${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
-      setSaveStatus('GPS location set', 'ok');
+      setSaveStatus('GPS-локацію встановлено', 'ok');
     },
-    err => setSaveStatus(`GPS error: ${err.message}`, 'error')
+    err => setSaveStatus(`Помилка GPS: ${err.message}`, 'error')
   );
 }
 
@@ -584,21 +584,21 @@ function boot() {
   /* Save */
   $('btn-save').addEventListener('click', () => {
     saveSettings();
-    setSaveStatus('Settings saved!', 'ok');
+    setSaveStatus('Налаштування збережено!', 'ok');
     startAutoCheck();
   });
 
   /* Test Telegram */
   $('btn-test').addEventListener('click', async () => {
     $('btn-test').disabled = true;
-    setSaveStatus('Sending test message…', '');
+    setSaveStatus('Надсилання тестового повідомлення…', '');
     try {
-      await sendTelegram('⛈️ <b>Weather Alert Bot</b>\n\nThis is a test message. Your bot is working correctly! ✅');
-      setSaveStatus('Test message sent!', 'ok');
-      addLog('sent', 'Test Telegram message sent successfully');
+      await sendTelegram('⛈️ <b>Бот погодних сповіщень</b>\n\nЦе тестове повідомлення. Ваш бот працює коректно! ✅');
+      setSaveStatus('Тестове повідомлення надіслано!', 'ok');
+      addLog('sent', 'Тестове Telegram-повідомлення успішно надіслано');
     } catch(e) {
-      setSaveStatus(`Failed: ${e.message}`, 'error');
-      addLog('error', `Test message failed: ${e.message}`);
+      setSaveStatus(`Помилка: ${e.message}`, 'error');
+      addLog('error', `Не вдалося надіслати тестове повідомлення: ${e.message}`);
     } finally {
       $('btn-test').disabled = false;
     }
